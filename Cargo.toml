@@ -3,4 +3,8 @@ name = "ecs-engine"
 version = "0.1.0"
 edition = "2024"
 
+[workspace]
+members = ["ecs-engine-derive"]
+
 [dependencies]
+ecs-engine-derive = { path = "ecs-engine-derive" }
