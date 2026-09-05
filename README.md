@@ -3,9 +3,9 @@
 A small, dependency-free Entity-Component-System library for Rust, built around
 sparse-set storage and generational entity IDs.
 
-There's no scheduler, no plugin system, no macros -- just a `World` you poke
-entities and components into, and iterate over. It's meant to be read in an
-afternoon and extended to fit whatever you're building.
+There's no scheduler, no plugin system -- just a `World` you poke entities and
+components into, and iterate over. It's meant to be read in an afternoon and
+extended to fit whatever you're building.
 
 ## Features
 
@@ -18,7 +18,10 @@ afternoon and extended to fit whatever you're building.
 - **Type-erased storage map** -- `World` keeps one `Storage<T>` per component
   type behind a `TypeId`-keyed map, so component types don't need to be
   registered or listed up front.
-- **Zero dependencies** -- only `std`.
+- **`#[derive(Component)]`** -- generates the marker `impl ComponentConcept`
+  for a type, so you don't have to write it by hand.
+- **Zero runtime dependencies** -- only `std` (the `ecs-engine-derive` proc-macro
+  crate pulls in `syn`/`quote`, but only at compile time).
 
 ## Installation
 
@@ -39,13 +42,13 @@ ecs-engine = { path = "../ecs-engine" }
 ## Quick start
 
 ```rust
-use ecs_engine::{ComponentConcept, World};
+use ecs_engine::{Component, World};
 
+#[derive(Component)]
 struct Position { x: f32, y: f32 }
-impl ComponentConcept for Position {}
 
+#[derive(Component)]
 struct Velocity { dx: f32, dy: f32 }
-impl ComponentConcept for Velocity {}
 
 fn main() {
     let mut world = World::default();
@@ -87,11 +90,21 @@ An `Entity` is just an `EntityID` (a recycled slot index) paired with an
 ### Components
 
 A component is any `'static` type that implements the marker trait
-`ComponentConcept`:
+`ComponentConcept`. The easiest way to get there is `#[derive(Component)]`:
+
+```rust
+#[derive(Component)]
+struct Position { x: f32, y: f32 }
+```
+
+which expands to:
 
 ```rust
 impl ComponentConcept for Position {}
 ```
+
+You can still write that `impl` by hand if you'd rather not pull in the
+derive macro.
 
 ### Storage & SparseSet
 
@@ -136,6 +149,8 @@ arity.
 - `World::despawn_entity` walks every registered storage on each despawn,
   which is fine for typical component counts but isn't free.
 - No serialization support.
+- `#[derive(Component)]` only implements the marker trait; there's no
+  attribute support (e.g. for opting into extra behavior per component).
 
 Contributions and issues are welcome.
 
