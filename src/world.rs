@@ -14,10 +14,10 @@ pub struct World {
 impl World {
     /// Create new entity
     pub fn create_entity(&mut self) -> Entity {
-        /// If there's free id -> use it
+        // If there's free id -> use it
         if let Some(id) = self.free_ids.pop() {
             Entity::new(id, self.generations[id.0 as usize])
-        /// Else create new
+        // Else create new
         } else {
             let id = EntityID(self.generations.len() as u32);
             self.generations.push(EntityGen(0));
