@@ -93,13 +93,16 @@ impl World {
             .map(|(id, c)| (Entity::new(id, self.generations[id.0 as usize]), c))
     }
 
+    /// Get and iterator of all entities that have 2 given components
     pub fn query2<A: ComponentConcept, B: ComponentConcept>(
         &self,
     ) -> impl Iterator<Item = (Entity, &A, &B)> {
         self.iter_components::<A>()
             .filter_map(move |(e, a)| self.get_component::<B>(e).map(|b| (e, a, b)))
     }
+}
 
+impl World {
     /// Get storage if exist
     fn get_storage<ComponentType: ComponentConcept>(&self) -> Option<&Storage<ComponentType>> {
         self.storages

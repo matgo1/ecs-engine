@@ -86,7 +86,9 @@ impl<ComponentType: ComponentConcept> SparseSet<ComponentType> {
             Some(removed) // Return Removed
         }
     }
+}
 
+impl<ComponentType: ComponentConcept> SparseSet<ComponentType> {
     /// Resize sparse Vector if needed
     fn ensure_sparse_size(&mut self, key: EntityID) {
         let idx: usize = key.0 as usize;
