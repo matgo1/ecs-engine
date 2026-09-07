@@ -9,7 +9,7 @@ pub struct Storage<ComponentType>
 where
     ComponentType: ComponentConcept,
 {
-    pub storage: SparseSet<ComponentType>,
+    pub(crate) storage: SparseSet<ComponentType>,
 }
 
 impl<ComponentType: ComponentConcept> Storage<ComponentType> {

@@ -9,9 +9,9 @@ pub struct SparseSet<ComponentType>
 where
     ComponentType: ComponentConcept,
 {
-    pub sparse: Vec<usize>,
-    pub dense_keys: Vec<usize>,
-    pub dense: Vec<ComponentType>,
+    pub(crate) sparse: Vec<usize>,
+    pub(crate) dense_keys: Vec<usize>,
+    pub(crate) dense: Vec<ComponentType>,
 }
 
 impl<ComponentType: ComponentConcept> SparseSet<ComponentType> {

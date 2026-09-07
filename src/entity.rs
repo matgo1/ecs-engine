@@ -1,9 +1,9 @@
 //! Entity and its getters
 #[derive(Default, Debug, Clone, Copy)]
-pub struct EntityID(pub u32);
+pub struct EntityID(pub(crate) u32);
 
 #[derive(Default, Debug, Clone, Copy)]
-pub struct EntityGen(pub u32);
+pub struct EntityGen(pub(crate) u32);
 
 #[derive(Default, Debug, Clone, Copy)]
 pub struct Entity {
@@ -18,12 +18,12 @@ impl Entity {
     }
 
     /// Getter of id
-    pub fn id(&self) -> EntityID {
+    pub(crate) fn id(&self) -> EntityID {
         self.id
     }
 
     /// Getter of gen
-    pub fn generation(&self) -> EntityGen {
+    pub(crate) fn generation(&self) -> EntityGen {
         self.generation
     }
 }
