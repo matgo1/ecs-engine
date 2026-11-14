@@ -127,16 +127,16 @@ type without registering it anywhere first.
 
 `World` is the single entry point for everything above:
 
-| Method | Description |
-| --- | --- |
-| `create_entity()` | Allocate a new entity (reusing a freed ID if one exists). |
-| `despawn_entity(entity)` | Remove all of an entity's components and free its ID. |
-| `add_component::<T>(entity, component)` | Attach (or overwrite) a component on an entity. |
-| `get_component::<T>(entity)` | Borrow a component, if the entity is alive and has one. |
-| `get_component_mut::<T>(entity)` | Mutably borrow a component. |
-| `remove_component::<T>(entity)` | Remove and return a component. |
-| `iter_components::<T>()` | Iterate every `(Entity, &T)` for a single component type. |
-| `query2::<A, B>()` | Iterate every `(Entity, &A, &B)` for entities that have both. |
+| Method                                  | Description                                                   |
+| --------------------------------------- | ------------------------------------------------------------- |
+| `create_entity()`                       | Allocate a new entity (reusing a freed ID if one exists).     |
+| `despawn_entity(entity)`                | Remove all of an entity's components and free its ID.         |
+| `add_component::<T>(entity, component)` | Attach (or overwrite) a component on an entity.               |
+| `get_component::<T>(entity)`            | Borrow a component, if the entity is alive and has one.       |
+| `get_component_mut::<T>(entity)`        | Mutably borrow a component.                                   |
+| `remove_component::<T>(entity)`         | Remove and return a component.                                |
+| `iter_components::<T>()`                | Iterate every `(Entity, &T)` for a single component type.     |
+| `query2::<A, B>()`                      | Iterate every `(Entity, &A, &B)` for entities that have both. |
 
 `query2` is implemented as a filter over `iter_components::<A>()`, looking up
 `B` on each match -- it favors simplicity over building out a join for every
