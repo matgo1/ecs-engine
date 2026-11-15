@@ -93,7 +93,18 @@ impl World {
             .map(|(id, c)| (Entity::new(id, self.generations[id.0 as usize]), c))
     }
 
-    /// Get and iterator of all entities that have 2 given components
+    /// Get a mutable iterator of all entities with the component paired with the component itself
+    pub fn iter_components_mut<ComponentType: ComponentConcept>(
+        &mut self,
+    ) -> impl Iterator<Item = (Entity, &mut ComponentType)> {
+        let generations = &self.generations;
+        Self::storage_mut::<ComponentType>(&mut self.storages)
+            .into_iter()
+            .flat_map(|s| s.iter_mut())
+            .map(move |(id, c)| (Entity::new(id, generations[id.0 as usize]), c))
+    }
+
+    /// Get an iterator of all entities that have 2 given components
     pub fn query2<A: ComponentConcept, B: ComponentConcept>(
         &self,
     ) -> impl Iterator<Item = (Entity, &A, &B)> {
@@ -124,5 +135,16 @@ impl World {
     ///Helper function to check if entity is available
     fn is_alive(&self, entity: Entity) -> bool {
         self.generations[entity.id().0 as usize].0 == entity.generation().0
+    }
+}
+
+impl World {
+    fn storage_mut<ComponentType: ComponentConcept>(
+        storages: &mut HashMap<TypeId, Box<dyn AnyStorage>>,
+    ) -> Option<&mut Storage<ComponentType>> {
+        storages
+            .get_mut(&TypeId::of::<ComponentType>())?
+            .as_any_mut()
+            .downcast_mut()
     }
 }

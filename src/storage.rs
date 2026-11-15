@@ -43,6 +43,14 @@ impl<ComponentType: ComponentConcept> Storage<ComponentType> {
             .zip(self.storage.dense.iter())
             .map(|(&k, c)| (EntityID(k as u32), c))
     }
+
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (EntityID, &mut ComponentType)> {
+        self.storage
+            .dense_keys
+            .iter_mut()
+            .zip(self.storage.dense.iter_mut())
+            .map(|(&mut k, c)| (EntityID(k as u32), c))
+    }
 }
 
 pub trait AnyStorage {
