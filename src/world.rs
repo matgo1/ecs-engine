@@ -108,8 +108,51 @@ impl World {
     pub fn query2<A: ComponentConcept, B: ComponentConcept>(
         &self,
     ) -> impl Iterator<Item = (Entity, &A, &B)> {
+        assert_ne!(
+            TypeId::of::<A>(),
+            TypeId::of::<B>(),
+            "Components can't be the same"
+        );
         self.iter_components::<A>()
             .filter_map(move |(e, a)| self.get_component::<B>(e).map(|b| (e, a, b)))
+    }
+
+    /// Get a mutable iterator of all entities that have 2 given components
+    pub fn query2_mut<A: ComponentConcept, B: ComponentConcept>(
+        &mut self,
+    ) -> impl Iterator<Item = (Entity, &mut A, &mut B)> {
+        assert_ne!(
+            // Check if valid call
+            TypeId::of::<A>(),
+            TypeId::of::<B>(),
+            "Components can't be the same"
+        );
+
+        // Get 2 &mut simulantaly
+        let [a, b] = self
+            .storages
+            .get_disjoint_mut([&TypeId::of::<A>(), &TypeId::of::<B>()]);
+
+        let a: Option<&mut Storage<A>> =
+            a.and_then(|s| s.as_any_mut().downcast_mut::<Storage<A>>());
+        let b: Option<&mut Storage<B>> =
+            b.and_then(|s| s.as_any_mut().downcast_mut::<Storage<B>>());
+
+        let generations = &self.generations;
+        a.zip(b).into_iter().flat_map(move |(a, b)| {
+            let b_components = b.storage.dense.as_mut_ptr();
+            let b_set = &b.storage;
+            a.iter_mut().filter_map(move |(id, a)| {
+                let idx = b_set.dense_index(id)?;
+                // SAFETY:
+                // 1. the index is valid since dense_index return positions of live components
+                // 2. There are never 2 &mut to one B
+                // 3. A and B are different storages
+                // 4. The pointer can't go stale
+                let b = unsafe { &mut *b_components.add(idx) };
+                Some((Entity::new(id, generations[id.0 as usize]), a, b))
+            })
+        })
     }
 }
 
@@ -139,6 +182,7 @@ impl World {
 }
 
 impl World {
+    /// Get mutable storage (not &mut self)
     fn storage_mut<ComponentType: ComponentConcept>(
         storages: &mut HashMap<TypeId, Box<dyn AnyStorage>>,
     ) -> Option<&mut Storage<ComponentType>> {

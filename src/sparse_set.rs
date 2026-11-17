@@ -86,6 +86,11 @@ impl<ComponentType: ComponentConcept> SparseSet<ComponentType> {
             Some(removed) // Return Removed
         }
     }
+
+    pub(crate) fn dense_index(&self, key: EntityID) -> Option<usize> {
+        let idx: usize = key.0 as usize;
+        self.is_valid_data(idx).then(|| self.sparse[idx])
+    }
 }
 
 impl<ComponentType: ComponentConcept> SparseSet<ComponentType> {
