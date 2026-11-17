@@ -25,7 +25,7 @@ impl<ComponentType: ComponentConcept> SparseSet<ComponentType> {
     }
 
     /// Add new comonent
-    pub fn insert(&mut self, key: EntityID, component: ComponentType) -> &ComponentType {
+    pub(crate) fn insert(&mut self, key: EntityID, component: ComponentType) -> &ComponentType {
         self.ensure_sparse_size(key);
 
         let idx: usize = key.0 as usize;
@@ -42,7 +42,7 @@ impl<ComponentType: ComponentConcept> SparseSet<ComponentType> {
         &self.dense[self.sparse[idx]]
     }
 
-    pub fn get(&self, key: EntityID) -> Option<&ComponentType> {
+    pub(crate) fn get(&self, key: EntityID) -> Option<&ComponentType> {
         let idx: usize = key.0 as usize;
 
         if !self.is_valid_data(idx) {
@@ -52,7 +52,7 @@ impl<ComponentType: ComponentConcept> SparseSet<ComponentType> {
         }
     }
 
-    pub fn get_mut(&mut self, key: EntityID) -> Option<&mut ComponentType> {
+    pub(crate) fn get_mut(&mut self, key: EntityID) -> Option<&mut ComponentType> {
         let idx: usize = key.0 as usize;
 
         if !self.is_valid_data(idx) {
@@ -63,7 +63,7 @@ impl<ComponentType: ComponentConcept> SparseSet<ComponentType> {
     }
 
     /// Return a component, return if exist
-    pub fn remove(&mut self, key: EntityID) -> Option<ComponentType> {
+    pub(crate) fn remove(&mut self, key: EntityID) -> Option<ComponentType> {
         let idx = key.0 as usize;
         if !self.is_valid_data(idx) {
             None
